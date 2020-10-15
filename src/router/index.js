@@ -8,7 +8,7 @@ import User from '../views/User.vue'
 import Edit from '../views/Edit.vue'
 import MyFollow from '../views/MyFollow.vue'
 import MyComment from '../views/MyComment.vue'
-
+import MyStar from '../views/MyStar.vue'
 
 Vue.use(VueRouter)
 
@@ -20,15 +20,17 @@ const router = new VueRouter({
     { path: '/user', component: User},
     { path: '/edit', component: Edit},
     { path: '/my-follow', component: MyFollow},
-    { path: '/my-comment', component: MyComment}
-
+    { path: '/my-comment', component: MyComment},
+    { path: '/my-star', component: MyStar}
 
   ],
 })
 
 // 导航守卫 拦截未登录用户
 router.beforeEach((to, from, next) => {
-  if(to.path == '/user'){
+  const authPath = ['/user', '/my-follow', '/my-comment', '/my-star', '/edit']
+  // if(to.path == '/user'){
+  if(authPath.includes(to.path)){
     let token = localStorage.getItem('token')
     if(token) {
       next()
