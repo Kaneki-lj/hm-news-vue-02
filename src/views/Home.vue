@@ -9,7 +9,7 @@
         <i class="iconfont iconsearch"></i>
         <span>搜索新闻</span>
       </div>
-      <div class="right">
+      <div class="right" @click="$router.push('/login')">
         <i class="iconfont iconwode"></i>
       </div>
     </div>
