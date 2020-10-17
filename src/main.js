@@ -23,7 +23,6 @@ Vue.component('hm-logo', HmLogo)
 Vue.component('hm-button', HmButton)
 Vue.component('hm-post', HmPost)
 
-
 // 引入vant
 import {
   Field,
@@ -35,8 +34,14 @@ import {
   RadioGroup,
   Uploader,
   List,
+  Tab,
+  Tabs,
+  PullRefresh,
 } from 'vant'
 
+Vue.use(PullRefresh)
+Vue.use(Tab)
+Vue.use(Tabs)
 Vue.use(List)
 Vue.use(Uploader)
 Vue.use(Radio)
