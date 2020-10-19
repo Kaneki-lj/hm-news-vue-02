@@ -39,6 +39,28 @@
         </div>
       </div>
     </div>
+    <!-- 评论部分 -->
+    <div class="comments">
+      <hm-comment
+        v-for="comment in commentsList"
+        :key="comment.id"
+        :comment="comment"
+      ></hm-comment>
+    </div>
+    <!-- 底部 -->
+    <div class="footer">
+      <!-- 输入框 -->
+      <div class="input">
+        <input type="text" placeholder="写跟帖" />
+        <van-icon name="chat-o" badge="9" />
+        <van-icon name="star-o" />
+      </div>
+      <!-- 文本框 -->
+      <!-- <div class="textarea">
+        <textarea placeholder="马哥"></textarea>
+        <div class="send">发送</div>
+      </div> -->
+    </div>
   </div>
 </template>
 
@@ -49,10 +71,12 @@ export default {
       detail: {
         user: {},
       },
+      commentsList: [],
     }
   },
   created() {
     this.getDetail()
+    this.getCommentsList()
   },
   methods: {
     async getDetail() {
@@ -101,9 +125,16 @@ export default {
         return
       }
       let res = await this.$axios.get(`/post_like/${this.detail.id}`)
-      if(res.data.statusCode === 200) {
+      if (res.data.statusCode === 200) {
         this.$toast.success(res.data.message)
         this.getDetail()
+      }
+    },
+    async getCommentsList() {
+      let res = await this.$axios.get(`/post_comment/${this.$route.params.id}`)
+      if (res.data.statusCode === 200) {
+        console.log('评论列表', res.data.data)
+        this.commentsList = res.data.data
       }
     },
   },
@@ -144,6 +175,7 @@ export default {
 }
 .container {
   padding: 0 20px;
+  border-bottom: 3px solid #ccc;
   .user {
     color: #999;
     height: 40px;
@@ -172,6 +204,7 @@ export default {
   justify-content: flex-end;
   align-items: center;
   margin-top: 20px;
+  margin-bottom: 20px;
   .like {
     width: 50px;
     height: 30px;
@@ -186,6 +219,62 @@ export default {
     &.active {
       color: red;
       border: 1px solid red;
+    }
+  }
+}
+.footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+
+  .input {
+    border-top: 1px solid #000;
+    height: 50px;
+    background: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    input {
+      height: 30px;
+      width: 180px;
+      background: #ddd;
+      padding-left: 10px;
+      outline: none;
+      border: none;
+      border-radius: 15px;
+    }
+    .van-icon-chat-o {
+      font-size: 20px;
+    }
+    .van-icon-star-o {
+      font-size: 20px;
+    }
+  }
+  .textarea {
+    height: 100px;
+    background: pink;
+    border-top: 1px solid #000;
+    display: flex;
+    padding: 20px;
+    align-items: flex-end;
+    textarea {
+      background: #eee;
+      border-radius: 5px;
+      padding: 5px 10px;
+      flex: 1;
+      margin-right: 20px;
+      height: 100%;
+      resize: none;
+    }
+    .send {
+      width: 50px;
+      height: 30px;
+      line-height: 30px;
+      border-radius: 15px;
+      background: red;
+      color: #fff;
+      text-align: center;
     }
   }
 }
