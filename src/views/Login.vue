@@ -99,6 +99,11 @@ export default {
           // 提示信息
           this.$toast.success('登录成功')
           // 跳转 /user
+          if (this.$route.params.back) {
+            this.$router.back()
+          } else {
+            this.$router.push('/user')
+          }
           this.$router.push('/user')
         } else {
           // 提示信息
