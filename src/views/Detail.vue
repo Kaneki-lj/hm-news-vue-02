@@ -39,6 +39,7 @@
         </div>
       </div>
     </div>
+    <div ref="box"></div>
     <!-- 评论部分 -->
     <div class="comments">
       <hm-comment
@@ -50,15 +51,24 @@
     <!-- 底部 -->
     <div class="footer">
       <!-- 输入框 -->
-      <div class="input" @focus="handleFocus">
-        <input type="text" placeholder="写跟帖" />
-        <van-icon name="chat-o" badge="9" />
-        <van-icon name="star-o" />
+      <div class="input" v-if="!isShow">
+        <input type="text" placeholder="写跟帖" @focus="handleFocus" />
+        <van-icon name="chat-o" :badge="detail.comment_length" />
+        <van-icon
+          name="star-o"
+          @click="star"
+          :class="{ active: detail.has_star }"
+        />
       </div>
       <!-- 文本框 -->
-      <div class="textarea" v-if="isShow" @blur="handleBlur">
-        <textarea placeholder="马哥"></textarea>
-        <div class="send">发送</div>
+      <div class="textarea" v-else>
+        <textarea
+          :placeholder="replyName ? '回复:' + replyName : '请输入内容'"
+          ref="textarea"
+          @blur="handleBlur"
+          v-model="content"
+        ></textarea>
+        <div class="send" @touchstart="send">发送</div>
       </div>
     </div>
   </div>
@@ -72,12 +82,27 @@ export default {
         user: {},
       },
       commentsList: [],
-      isShow: false
+      isShow: false,
+      replyId: '',
+      replyName: '',
+      content: '',
     }
   },
   created() {
     this.getDetail()
     this.getCommentsList()
+    // 注册事件 接收数据
+    this.$bus.$on('reply', async (replyId, replyName) => {
+      // console.log('datail --走了')
+      // 保存传的数据
+      this.replyId = replyId
+      this.replyName = replyName
+
+      // 文本域显示 聚焦
+      this.isShow = true
+      await this.$nextTick()
+      this.$refs.textarea && this.$refs.textarea.focus()
+    })
   },
   methods: {
     async getDetail() {
@@ -139,13 +164,60 @@ export default {
       }
     },
     // 给input注册聚焦事件
-    handleFocus() {
+    async handleFocus() {
       this.isShow = true
+      // 聚焦
+      await this.$nextTick()
+      this.$refs.textarea.focus()
     },
     // 给 textarea 注册失焦事件
     handleBlur() {
+      // 文本域隐藏
       this.isShow = false
-    }
+      // 根据内容判断 没有内容 失焦就清空
+      if (!this.content) {
+        this.replyId = ''
+        this.replyName = ''
+      }
+    },
+    // 发表评论回复
+    async send() {
+      // console.log('点击发送')
+      if (this.content === '') {
+        this.$toast('回复内容不能为空')
+        return
+      }
+      let res = await this.$axios.post(
+        `/post_comment/${this.$route.params.id}`,
+        {
+          content: this.content,
+          parent_id: this.replyId,
+        }
+      )
+
+      console.log('评论列表', res.data)
+      if (res.data.statusCode === 200) {
+        this.$toast.success('评论成功')
+        // 重新请求评论
+        this.getCommentsList()
+        // 清空
+        this.content = ''
+        this.replyId = ''
+        this.replyName = ''
+        // 隐藏文本域
+        this.isShow = false
+        // 滚动到某位置
+        this.$refs.box.scrollIntoView()
+      }
+    },
+    // 收藏
+    async star() {
+      let res = await this.$axios.get(`/post_star/${this.$route.params.id}`)
+      if (res.data.statusCode === 200) {
+        this.$toast.success(res.data.message)
+        this.getDetail()
+      }
+    },
   },
 }
 </script>
@@ -231,10 +303,14 @@ export default {
     }
   }
 }
+.comments {
+  padding-bottom: 40px;
+}
 .footer {
   position: fixed;
   bottom: 0;
   width: 100%;
+  background: #fff;
   .input {
     border-top: 1px solid #000;
     height: 50px;
@@ -285,5 +361,8 @@ export default {
       text-align: center;
     }
   }
+}
+.active {
+  color: #f00;
 }
 </style>

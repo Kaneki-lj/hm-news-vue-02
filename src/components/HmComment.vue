@@ -9,7 +9,7 @@
         <div class="nickname">{{ comment.user.nickname }}</div>
         <div class="date">{{ comment.user.create_date | date }}</div>
       </div>
-      <div class="right">回复</div>
+      <div class="right" @click="reply">回复</div>
     </div>
     <!-- 楼层 -->
     <hm-floor v-if="comment.parent" :parent="comment.parent" :count="getCount(0,comment)"></hm-floor>
@@ -28,6 +28,7 @@ export default {
       // comment: {}
     }
   },
+  
   methods: {
     getCount(num,parent) {
       if(parent.parent){
@@ -35,6 +36,9 @@ export default {
       }else{
         return num
       }
+    },
+    reply() {
+      this.$bus.$emit('reply',this.comment.id, this.comment.user.nickname)
     }
   }
 }
