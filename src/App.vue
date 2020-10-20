@@ -1,6 +1,8 @@
 <template>
   <div>
-    <router-view></router-view>
+    <keep-alive include="home, login">
+      <router-view></router-view>
+    </keep-alive>
   </div>
 </template>
 

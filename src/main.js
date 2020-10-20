@@ -86,6 +86,10 @@ Vue.filter('date', function(val, format = 'YYYY-MM-DD') {
   return moment(val).format(format)
 })
 
+// 事件总线
+const bus = new Vue()
+Vue.prototype.$bus = bus
+
 new Vue({
   router,
   render: h => h(App),
