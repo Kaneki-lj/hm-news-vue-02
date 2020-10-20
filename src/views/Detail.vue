@@ -50,16 +50,16 @@
     <!-- 底部 -->
     <div class="footer">
       <!-- 输入框 -->
-      <div class="input">
+      <div class="input" @focus="handleFocus">
         <input type="text" placeholder="写跟帖" />
         <van-icon name="chat-o" badge="9" />
         <van-icon name="star-o" />
       </div>
       <!-- 文本框 -->
-      <!-- <div class="textarea">
+      <div class="textarea" v-if="isShow" @blur="handleBlur">
         <textarea placeholder="马哥"></textarea>
         <div class="send">发送</div>
-      </div> -->
+      </div>
     </div>
   </div>
 </template>
@@ -72,6 +72,7 @@ export default {
         user: {},
       },
       commentsList: [],
+      isShow: false
     }
   },
   created() {
@@ -137,6 +138,14 @@ export default {
         this.commentsList = res.data.data
       }
     },
+    // 给input注册聚焦事件
+    handleFocus() {
+      this.isShow = true
+    },
+    // 给 textarea 注册失焦事件
+    handleBlur() {
+      this.isShow = false
+    }
   },
 }
 </script>
@@ -226,7 +235,6 @@ export default {
   position: fixed;
   bottom: 0;
   width: 100%;
-
   .input {
     border-top: 1px solid #000;
     height: 50px;
@@ -240,7 +248,7 @@ export default {
       width: 180px;
       background: #ddd;
       padding-left: 10px;
-      outline: none;
+      // outline: none;
       border: none;
       border-radius: 15px;
     }
@@ -253,7 +261,7 @@ export default {
   }
   .textarea {
     height: 100px;
-    background: pink;
+    // background: pink;
     border-top: 1px solid #000;
     display: flex;
     padding: 20px;
