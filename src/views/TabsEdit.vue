@@ -40,14 +40,14 @@ export default {
   },
   methods: {
     async getactive() {
-      // let activeTabs = JSON.parse(localStorage.getItem('activeTabs'))
-      // let deactiveTabs = JSON.parse(localStorage.getItem('deactiveTabs'))
+      let activeTabs = JSON.parse(localStorage.getItem('activeTabs'))
+      let deactiveTabs = JSON.parse(localStorage.getItem('deactiveTabs'))
 
-      // if (activeTabs && deactiveTabs) {
-      //   this.activeTabs = activeTabs
-      //   this.deactiveTabs = deactiveTabs
-      //   return
-      // }
+      if (activeTabs && deactiveTabs) {
+        this.activeTabs = activeTabs
+        this.deactiveTabs = deactiveTabs
+        return
+      }
 
       let res = await this.$axios.get('/category')
       console.log('栏目列表', res.data)
@@ -67,7 +67,7 @@ export default {
     // 添加
     add(id) {
       // 根据id找到对应栏目
-      let tab = this.activeTabs.find(v => v.id == id)
+      let tab = this.deactiveTabs.find(v => v.id == id)
       // 上面添加
       this.activeTabs.push(tab)
       // 下面删除
