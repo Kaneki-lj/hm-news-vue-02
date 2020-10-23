@@ -73,11 +73,30 @@ export default {
       this.getPostList(this.tabList[val].id)
     },
   },
+  activated() {
+     // 先从本地获取
+      let activeTabs = JSON.parse(localStorage.getItem('activeTabs'))
+      if(activeTabs){
+        this.tabList = activeTabs
+        this.active = 1
+        this.getPostList(this.tabList[this.active].id) 
+        return
+      }
+  },
   created() {
     this.getTabList()
   },
   methods: {
     async getTabList() {
+      // 先从本地获取
+      let activeTabs = JSON.parse(localStorage.getItem('activeTabs'))
+      if(activeTabs){
+        this.tabList = activeTabs
+        this.getPostList(this.tabList[this.active].id) 
+        return
+      }
+
+
       let res = await this.$axios.get('category')
       if (res.data.statusCode === 200) {
         this.tabList = res.data.data
