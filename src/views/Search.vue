@@ -21,11 +21,22 @@
     </div>
     <!-- 搜索推荐 -->
     <div class="recommend" v-if="recommendList.length">
-      <div v-for="item in recommendList" :key="item.id">{{ item.title }}</div>
+      <div
+        v-for="item in recommendList"
+        :key="item.id"
+        @click="click_history(item.title)"
+      >
+        {{ item.title }}
+      </div>
     </div>
     <!-- 列表 -->
     <div class="content" v-else-if="postList.length">
-      <hm-post v-for="post in postList" :post="post" :key="post.id"></hm-post>
+      <hm-post
+        v-for="post in postList"
+        :post="post"
+        :key="post.id"
+        @click.native="$router.push(`/detail/${post.id}`)"
+      ></hm-post>
     </div>
     <!-- 历史记录 热门搜索 -->
     <div class="history" v-else>
@@ -90,6 +101,7 @@ export default {
   },
   methods: {
     async search() {
+      this.recommendList = []
       if (!this.keyword.trim()) return
 
       // 把关键字添加到历史记录中
